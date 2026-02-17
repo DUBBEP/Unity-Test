@@ -13,8 +13,6 @@ class GameObject extends Model
     protected $casts = [
         'color' => 'array',
         'size' => 'array',
-        'rigidbody' => 'boolean',
-        'use_gravity' => 'boolean',
     ];
     
     // Allow mass assignment
