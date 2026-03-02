@@ -6,29 +6,25 @@ use Illuminate\Http\Request;
 
 class SessionController extends Controller
 {
-    public function create()
-    {
-        return view('auth.login');
-    }
-
     public function store(Request $request)
     {
-        $request->validate([
+        $attributes = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($attributes)) {
+            // Return 401 Unauthorized instead of throwing a View Exception
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
         $user = Auth::user();
-        // Generate a token for Unity to store
-        $token = $user->createToken('unity-token')->plainTextToken;
+        $token = $user->createToken('unity_session')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
-            'token' => $token
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => $user
         ]);
     }
 
