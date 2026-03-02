@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\GameObject;
 use Illuminate\Http\Request;
-
+use App\Jobs\ProcessGameObject;
 class GameObjectController extends Controller
 {
     public function index()
@@ -30,6 +30,8 @@ class GameObjectController extends Controller
             'bounciness'  => $request->bounciness,
             'friction'    => $request->friction,
         ]);
+
+        ProcessGameObject::dispatch($object);
 
         return response()->json($object, 201);
     }
