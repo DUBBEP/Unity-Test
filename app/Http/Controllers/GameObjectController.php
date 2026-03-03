@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 use App\Models\GameObject;
 use Illuminate\Http\Request;
 use App\Jobs\ProcessGameObject;
+use Illuminate\Support\Facades\Cache;
+
 class GameObjectController extends Controller
 {
     public function index()
     {
-        $objects = GameObject::all();
+        // If the cache is empty (first run), provide an empty array
+        $leaderboard = Cache::get('global_leaderboard', []);
 
-        return response()->json($objects);
+        return response()->json([
+            'source' => 'cache',
+            'data' => $leaderboard
+        ]);
     }
 
     public function show(GameObject $id)
@@ -20,6 +26,9 @@ class GameObjectController extends Controller
 
     public function store(Request $request)
     {
+        $object = GameObject::create($request->all());
+
+        /*
         $object = GameObject::create([
             'name'        => $request->name,
             'shape'       => (string)$request->shape, 
@@ -30,6 +39,7 @@ class GameObjectController extends Controller
             'bounciness'  => $request->bounciness,
             'friction'    => $request->friction,
         ]);
+        */
 
         ProcessGameObject::dispatch($object);
 
